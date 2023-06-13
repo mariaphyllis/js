@@ -1,0 +1,459 @@
+AULA 14 - ESTRUTURAS DE CONTROLE
+Switch
+if trata um possibilidade dentro de um universo maior
+switch eu já sei o que pode acontecer.
+Usamos com case (caso).
+Precisamos do break para ele parar de procurar quando encontrar, senão ele pode prourar tudo.
+Vamos usar especialmente naquelas que não são numéricas.
+
+execBtn(value) {
+        switch (value){
+            case 'ac':
+                this.clearAll();
+                break;
+            case 'ce':
+                this.clearEntry();
+                break;
+            case 'soma':
+                this.addOperation('+');
+                break;
+            case 'subtracao':
+                this.addOperation('-');
+                break;
+            case 'divisao':
+                this.addOperation('/');
+                break;
+            case 'multiplicacao':
+                this.addOperation('*');
+                break;
+            case 'porcento': 
+                this.addOperation('%');
+                break;
+            case 'igual':
+                break;
+            case 'ponto':
+                this.addOperation('.');
+                break;
+            
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                this.addOperation(parseInt(value));
+                break;
+
+            default:
+                this.setError();
+                break;   
+        }
+
+    }
+
+
+
+Precisa guardar em algum lugar o que a pessoa está clicando pra depois a gente dizer o que ela vai fazer. O que clicou pela última vez? O que ela está clicando agora? O q vai acontecer.
+Ele vai sendo populado a medida que a gente vai clicando.
+Criação do construtor de mais um atributo, que vai ter a ideia de a gente guardar o que está acontecendo. Pode ser um operador, um número, etc. Isto será feito em um Array.
+this._operation = [];
+
+Lá nos métodos vamos criar clearAll(), cancelEntry(), soma(), etc. e criar um case para cada um.
+
+Vamos usar o médoto push,  um push para ir inserindo no array.
+
+CE precisa tirar a última entrada:
+pop: meuArray.pop() tira o último elemento do array. (no console do Chrome ele até exibiu o último elemento antes de tirar).
+
+AC precisa esvaziar o array
+clearAll(){
+	this._operation = []; (ou nulo?)
+ 
+
+
+
+
+AULA 13 - MÉTODO PARA MANIPULAR MÚLTIPLOS EVENTOS
+Usando split()
+
+btn.addEventListenerAll("click..)
+
+addEventListener[All] = só suporta um evento por vez
+
+Este evento não existe no nosso elemento btn
+
+então ele vai ser um método da nossa classe, do nosso controller.
+
+ao invés de btn vamos trocar para "this", para acessa no meu próprio controller.
+
+btn.addEventListenerAll("click..) ---> this.addEventListenerAll("click..)
+
+Isto também significa que a gente precisa criar nosso método:
+addEventListenerAll(){
+}
+Este método recebe qual o evento e qual função:
+addEventListenerAll(events, fn){
+}
+Em qual elemento que vou executar isso? No btn.
+Posso passar ele como primeiro parâmetro.
+addEventListenerAll(element, events, fn){
+}
+
+Ficou assim: element: btn, events: "click drag", fn: (arrow function) e => {}.
+
+this.addEventListenerAll(btn, "click drag", e => {  })
+
+Só conseguimos fazer um evento por vez. ["click drag"]
+Só conseguimos percorrer se for um array. ["click drag"]
+
+Vamos fazer SPLIT. 
+Como vamos pegar a string ["click drag"] e dizer que click é uma coisa e drag é outra?
+Neste caso o split é um espaço " ".
+
+No console do Chrome:
+a = "click drag" (typeof = string)
+a.split(' ') ----> tranforma em array
+["click", "drag"]
+
+b = a.split(' ')
+typeof b --> "object"
+
+--- Vou dizer ao meu código que quero fazer um foreach no split do meu event. ---
+
+events.split(' ').forEach(event => {
+	element.addEventListener(event, fn, false);
+});
+
+Uma vez que é um array eu consigo fazer um forEach
+
+O false é para que ele não clique em dois ao mesmo tempo (o número e o botão.
+
+initButtonsEvents(){
+
+let buttons = document.querySelectorAll("#buttons > g, #parts > g");
+        
+        buttons.forEach((btn, index)=>{
+            this.addEventListenerAll(btn, "click drag", e => {
+                console.log(btn.className.baseVal.replace("btn-",""));
+
+            })
+            this.addEventListenerAll(btn, "mouseover mouseup mousedown", e => {
+                btn.style.cursor = "pointer"; // mãozinha
+            })
+        })
+    }
+
+
+
+
+AULA 12 - EVENTO CLICK
+Primeiro ver que é o cara que está sendo monitorado para disparar o evento. Depois adicionar o método:
+
+buttons.addEventListener
+
+buttons é o cara
+
+addEventListener = recebe pelo menos dois parâmetros: 
+(1) qual evento vc quer e (2) o que devo fazer - pode ser arrow function ou função direto.
+
+buttons.addEventListenerAll(btn, "click drag", e=> {
+
+e=> é o parâmetro do meu arrow function.
+Se precisar falar sobre o cara que foi clicado eu chamo o "e" do 
+
+!!!! Não chamamos o evento em lugar nenhum, por isso ele não executa NADA então vamos adicionar ao construtor.
+
+ constructor() {
+     (...)
+        this.initButtonsEvents();
+    }
+
+addEventListener é um método de UM elemento e não de uma lista (de elementos). Vamos precisar percorrer a lista e adicionar o evento em cada um deles.
+
+Para uma visualização rápida podemos usar o botão no. 9:
+let buttons = document.querySelector("#buttons > g.btn-9");
+(retorna MouseEvent) que é a nossa variável "e" da arrow function.
+
+buttons é nossa lista (NodeList) e para percorrer cada botão a gente coloca o método forEach()
+buttons.forEach(btn)=>{
+
+
+buttons.forEach((btn, index)=>{
+
+
+AULA 11
+
+Método querySelector: toda vez que precisamos manipular o DOM nós vamos utilizar o querySelector para acessar algum elemento (ou vários) de algum documento.
+
+no HTML tem (aba Elements): 
+id="base"
+id="buttons"
+id="parts"
+id="logo-hcode"
+
+As camadas vieram assim quando foi exportado do Illustrator
+Vamos usar:
+id="buttons"
+id="parts"
+O designer que gerou o svg separou o botão e os números (button e parts)
+
+Pq class e não id? 
+pq preciso criar evento e tem dois
+
+CRIANDO MÉTODO initButtonsEvents()
+
+document.querySelector("#buttons > g, #parts > g");
+
+---- #buttons (id)
+---- > quer dizer filho (seletor de filhos)
+pegue todas as tags g que são filhos de button.
+
+document.querySelector() só traz o primeiro elementos
+No Chrome, se executar ele só traz btn do #buttons.
+
+Por isto é preciso usar o
+document.querySelectorAll()
+daí ele traz cada um e todos - NodeList
+
+document.querySelectorAll("#buttons > g, #parts > g");
+
+NodeList(38) [g.btn-ac, g.btn-ce, g.btn-porcento, g.btn-divisao, g.btn-9, g.btn-6, g.btn-3, g.btn-soma, g.btn-igual, g.btn-8, g.btn-5, g.btn-2, g.btn-ponto, g.btn-7, g.btn-4, g.btn-1, g.btn-0, g.btn-multiplicacao, g.btn-subtracao, g.btn-ac, g.btn-ce, g.btn-porcento, g.btn-divisao, g.btn-7, g.btn-8, g.btn-9, g.btn-multiplicacao, g.btn-4, g.btn-5, g.btn-6, g.btn-subtracao, g.btn-1, g.btn-0, g.btn-2, g.btn-ponto, g.btn-3, g.btn-igual, g.btn-soma]
+
+Colocar em variável para criar EVENTOS (adicionar LET antes)
+let buttons = document.querySelectorAll("#buttons > g, #parts > g");
+
+
+AULA 10
+Refatorar = melhorar ou refazer o código otimizando o mesmo.
+
+window.calculator = new CalcController();
+
+variável "window" é global na tela, então acessamos no console.
+se está global, conseguimos acessar direto no console.
+não precisa acessar com a palavra "window": ao invés de escrever "window.document" basta "document".
+
+O que anteriomente era uma variável  let = dateEl, agora virou um ATRIBUTO e precisamos colocar o this._dateEl
+
+No console do Chrome se eu digito "calculator" ele retorna:
+
+CalcController {_operation: Array(0), _locale: 'en-UK', _displayCalcEl: text#display, _dateEl: text#data, _timeEl: text#hora}
+
+No console do Chrome 
+se eu digito "calculator.displayCalc = 24011980" ele retorna na tela, no display o valor e
+se eu digito "calculator.displayCalc" ele retorna o valor que está na tela atualmente.
+
+COLOCAR DATA AUTOMATICAMENTE:
+Date() -> Classe nativa do JavaScript para datas
+
+No arquivo .js:
+get currentDate() {
+	return new Date();
+}
+
+No console do Chrome:
+dteste = new Date() [sem o new ele não funciona o dir()]
+já retorna o valor
+
+Se pedir dir(dteste) ele retorna todos as propriedades/métodos que tem dentro dela.
+
+Wed May 24 2023 23:42:47 GMT-0300 (Horário Padrão de Brasília)
+[[Prototype]]: Object
+constructor: ƒ Date()
+getDate: ƒ getDate()
+getDay: ƒ getDay()
+getFullYear: ƒ getFullYear()
+getHours: ƒ getHours()
+getMilliseconds: ƒ getMilliseconds()
+getMinutes: ƒ getMinutes()
+getMonth: ƒ getMonth()
+getSeconds: ƒ getSeconds()
+getTime: ƒ getTime()
+getTimezoneOffset: ƒ getTimezoneOffset()
+getUTCDate: ƒ getUTCDate()
+getUTCDay: ƒ getUTCDay()
+getUTCFullYear: ƒ getUTCFullYear()
+getUTCHours: ƒ getUTCHours()
+getUTCMilliseconds: ƒ getUTCMilliseconds()
+getUTCMinutes: ƒ getUTCMinutes()
+getUTCMonth: ƒ getUTCMonth()
+getUTCSeconds: ƒ getUTCSeconds()
+getYear: ƒ getYear()
+setDate: ƒ setDate()
+setFullYear: ƒ setFullYear()
+setHours: ƒ setHours()
+setMilliseconds: ƒ setMilliseconds()
+setMinutes: ƒ setMinutes()
+setMonth: ƒ setMonth()
+setSeconds: ƒ setSeconds()
+setTime: ƒ setTime()
+setUTCDate: ƒ setUTCDate()
+setUTCFullYear: ƒ setUTCFullYear()
+setUTCHours: ƒ setUTCHours()
+setUTCMilliseconds: ƒ setUTCMilliseconds()
+setUTCMinutes: ƒ setUTCMinutes()
+setUTCMonth: ƒ setUTCMonth()
+setUTCSeconds: ƒ setUTCSeconds()
+setYear: ƒ setYear()
+toDateString: ƒ toDateString()
+toGMTString: ƒ toUTCString()
+toISOString: ƒ toISOString()
+toJSON: ƒ toJSON()
+toLocaleDateString: ƒ toLocaleDateString()
+toLocaleString: ƒ toLocaleString()
+toLocaleTimeString: ƒ toLocaleTimeString()
+toString: ƒ toString()
+toTimeString: ƒ toTimeString()
+toUTCString: ƒ toUTCString()
+valueOf: ƒ valueOf()
+Symbol(Symbol.toPrimitive): ƒ [Symbol.toPrimitive]()
+[[Prototype]]: Object
+
+Coordinated Universal Time or UTC is the primary time standard by which the world regulates clocks and time. 
+It is within about one second of mean solar time at 0° longitude and is not adjusted for daylight saving time. 
+It is effectively a successor to Greenwich Mean Time.
+
+Alguns testes:
+vixi.toUTCString()
+'Thu, 25 May 2023 02:42:47 GMT'
+
+vixi.toLocaleDateString("pt-br")
+'24/05/2023'
+
+vixi.toLocaleDateString('pt-br', {month:'long'})
+'maio'
+
+vixi.getUTCDate()
+25
+
+vixi.toLocaleString()
+'24/05/2023, 23:42:47'
+
+
+Função executada em um intervalo de tempo: setInterval();
+O tempo é marcado em milisegundos.
+
+Função antiga: setInterval (function() {} );
+Função arrow: setInterval (() => {} );
+
+  setInterval(()=>{
+            this.setDisplayDateTime();
+        }, 1000);
+
+Curiosidade
+setTimeOut()
+
+clearInterval(interval)
+
+O mesmo código pode ser transformado num método
+
+ setDisplayDateTime(){
+        this.displayDate = this.currentDate.toLocaleDateString(this._locale,{
+            day:"2-digit",
+            month: "long",
+            year: "numeric"    
+        });
+        this.displayTime = this.currentDate.toLocaleTimeString(this._locale);
+
+    }
+    get displayTime(){
+            return this._timeEl.innerHTML; 
+    }
+    set displayTime(value){
+        return this._timeEl.innerHTML = value; 
+    }
+
+
+AULA 09
+Método initialize. Temos que chamar no construtor. é um método no próprio objeto.
+
+DOCUMENT OBJECT MODEL (DOM):estrutura em que se baseia o documento HTML
+Documento
+Se mexer muito pode ficar pesado.
+
+BOM != BROWSER OBJECT MODEL
+
+Eventos: usando o mouse, teclado ou outro, criamos EVENTOS que são ações disparadas na aplicação;
+
+Cada elemento HTML vira OBJETO da coleção HTML document.
+
+No console pode digitar dir(document) para ver os objetos
+
+No console "window" apresenta os elementos do navegador. Por exemplo close() é o método da window que fecha a janela. No console se eu digitar window.close(); ele vai fechar a janela, ou seja, executa a função.
+query selector
+
+document.querySelector: 
+seleciona elementos por meio de seletores CSS3.
+Em CSS3 seletores de ID usamos '#' e de classes '.' .
+
+No console (Chrome) elemento display:
+Inspeciona ele e pega o nome id= xxxxx
+
+document.getElementById("display")
+
+document.querySelector("#display")
+
+retorna as informações do elemento
+
+let displayCalcEl = document.querySelector("#display");
+let dateEl = document.querySelector("#data");
+let horaEl = document.querySelector("#hora");
+-- Aqui seria como se eu estivesse fazendo um vínculo, amarrou o elemento com uma variável -- (no html?)
+
+Exercício:
+Se eu colocar algum número para aparecer no display com a função innerHTML ele exibe na calculadora:
+displayCalcEl.innerHTML = "24011980"; (exibe no display)
+(lembrar de ter o mesmo nome no vínculo)
+-- Amarra o JavaScript no DOM -- 
+
+
+
+
+
+## ATÉ AULA 08 ##
+
+/* AQUI vamos fazer os controles, as regras de negócios
+variaveis e função, atributos e metodos (pq dentro da classe)
+objeto representante da classe - instancia
+CONSTRUCTOR: nome dado ao método construtor
+PARÂMETROS: informações que a função precisa para que o construtor funcione
+ENCAPSULAMENTO: processo que controla o acesso a um atributo
+ENCAPSULAMENTO: public[todos acessm], protected[atributos e métodos da mesma classe e classe Pai]
+ENCAPSULAMENTO: private[somente atributos e métodos da própria classe]
+this._ : privado
+um objeto não deveria chamar um objeto privado?
+VALORes de ATRIBUTOS: atribuir ou recuperar
+getters e setters: métodos que permitem definir como acessar os valores */
+
+/* 
+
+get displayCalc() {
+
+    return this._displayCalc;
+}
+
+o get só me devolve o valor dele com qq regra
+
+set displayCalc(valor/argumento/parâmetro){ se eu vou definir precisa de um parâmetro??
+    this._displayCalc = valor;
+
+}
+
+mudar o valor
+
+TESTE
+Método construtor é aquele que é chamado automaticamente quando existe a instância de uma classe
+Atributos podem possuir encapsulamento: controlar quem pode ou não conversar com ele
+Criar get and set do atributo para controlar
+
+Instância é o objeto que representa uma classe
+Em uma aplicação Web. as camdas responsáveis por:
+1) tratar os dados da aplicação - MODEL
+2) exibir as informações em nosso navegador  - VIEW
+
+this ---> Palavra que usamos para fazer referência ao próprio objeto dentro de uma classe
+
+*/
