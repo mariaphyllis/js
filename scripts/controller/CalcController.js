@@ -1,4 +1,4 @@
-// VERSÃO 13 JUNHO 2023
+// VERSÃO 16 JUNHO 2023
 
 /* AQUI vamos fazer os controles, as regras de negócios
 variaveis e função, atributos e metodos (pq dentro da classe)
@@ -119,6 +119,9 @@ class CalcController {
         // join coloca sem virgula, com separador vazio ou outro que seja indicado
         this._operation = [result, last];
 
+        this.setLastNumberToDisplay();
+        // atualizar o display de novo para calcular e jogar na tela o calculo do ultimo par
+        
     }
     
     //  Criação de método para atualizar display
@@ -145,18 +148,19 @@ this.displayCalc = lastNumber;
     
     addOperation(value){
 
-            if(isNaN(this.getLastOperation())){
+        if(isNaN(this.getLastOperation())){
 
                 if(this.isOperator(value)){
                     this.setLastOperation(value);
-            } 
-                else if(isNaN(value)){
-                        
-                        console.log("Outra coisa", value);
-
-            } else { 
+                    } else if(isNaN(value)){      
+                         console.log("Outra coisa", value);
+                } else { 
                 this.pushOperation(value);
-            } 
+                // nao esta aparecendo na tela entao vai precisar chamar o display tbm
+                this.setLastNumberToDisplay();
+                // Atualizar display
+
+                 } 
 
         } else { 
 
