@@ -104,7 +104,9 @@ class CalcController {
         this._operation.push(value);
        
         if(this._operation.length > 3) {
-         
+        /* o tres aqui eh pq quando ele faz operacoes, ele faz em pares.
+        por exemplo 90 * 2 + 10, ele faz primeiro o 90 * 2 (=180) e depois 
+        faz 180 + 10 */ 
             this.calc();
         }
     }
@@ -112,17 +114,36 @@ class CalcController {
     calc(){
 
         let last = this._operation.pop();
+        // retira o ultimo e deixa na variavel last
         let result = eval(this._operation.join(""));
+        // join coloca sem virgula, com separador vazio ou outro que seja indicado
         this._operation = [result, last];
-    }
-    
-    setLastNumberToDisplay(){  //  Criação de método para atualizar display
-    }
-    
-    // ADD OPERATION
 
+    }
+    
+    //  Criação de método para atualizar display
+    /* Vou percorrer o array do final pro comeco para ver o que vai encontrar
+     Aula 17 "O comando FOR: procurando o ultimo numero do array" 
+     estrutura   for(let = 0; i <= 100, i++){
+            for (valor inicial, valor final, incremento)
+            for (valor final, valor inicial, decremento)
+
+     }      
+*/  
+    setLastNumberToDisplay(){  
+        let lastNumber;
+        for(let i = this._operation.length-1; i >=0; i--) {
+            if (!this.isOperator(this._operation[i])){
+                lastNumber = this._operation[i];
+                break;
+            }
+
+        }
+this.displayCalc = lastNumber;
+
+    }
+    
     addOperation(value){
-        console.log('A', isNaN(this.getLastOperation()));
 
             if(isNaN(this.getLastOperation())){
 
@@ -134,13 +155,14 @@ class CalcController {
                         console.log("Outra coisa", value);
 
             } else { 
-                this._operation.push(value);
+                this.pushOperation(value);
             } 
 
         } else { 
 
             if(this.isOperator(value)){
-                this._operation.push(value);
+
+                this.pushOperation(value);
             } else {
                 let newValue = this.getLastOperation().toString() + value.toString();
                 this.setLastOperation(parseInt(newValue));
@@ -164,23 +186,40 @@ class CalcController {
                 this.clearEntry();
                 break;
             case 'soma':
-
+                this.addOperation('+');
                 break;
             case 'subtracao':
-
+                this.addOperation('-');
                 break;
             case 'divisao':
-
+                this.addOperation('/');
                 break;
             case 'multiplicacao':
-
+                this.addOperation('*');
                 break;
             case 'porcento':
-
+                this.addOperation('%');
                 break;
             case 'igual':
 
                 break;
+            case 'ponto':
+                this.addOperation('.');
+                break;
+            
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':    
+            case '9':
+                this.addOperation(parseInt(value))
+                break;
+            
             default:
                 this.setError();
                 break;
@@ -189,7 +228,6 @@ class CalcController {
 
 
         }
-
 
     }
 
@@ -227,7 +265,7 @@ class CalcController {
 
     }
     get displayTime(){
-            return this._timeEl.innerHTML; 
+        return this._timeEl.innerHTML; 
     }
     set displayTime(value){
         return this._timeEl.innerHTML = value; 
