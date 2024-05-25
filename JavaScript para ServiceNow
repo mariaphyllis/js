@@ -1,0 +1,3 @@
+var tit = 'JavaScript para ServiceNow';
+
+gs.info('tit');
